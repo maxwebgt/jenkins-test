@@ -1,0 +1,7 @@
+services:
+  app:
+    build: ./app
+    container_name: express-hello-world
+    ports:
+      - "3000:3000"
+    restart: always
