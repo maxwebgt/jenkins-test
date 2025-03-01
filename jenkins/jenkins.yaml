@@ -74,12 +74,20 @@ jobs:
                 agent any
                 
                 stages {
+                  stage('Checkout') {
+                    steps {
+                      echo "Cloning repository from GitHub"
+                      git branch: 'main',
+                          credentialsId: 'github-credentials',
+                          url: 'git@github.com:maxwebgt/jenkins-test.git'
+                    }
+                  }
+                  
                   stage('Prepare') {
                     steps {
                       echo "Preparing build environment"
-                      sh 'mkdir -p app'
-                      sh 'cp -r /var/jenkins_home/app/* app/ || true'
-                      sh 'ls -la'
+                      sh 'cp -r ${WORKSPACE}/* app/ || true'
+                      sh 'ls -la app/'
                     }
                   }
                   

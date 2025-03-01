@@ -1,0 +1,13 @@
+{
+  "repository": {
+    "name": "express-hello-world",
+    "url": "git@github.com:maxwebgt/jenkins-test.git",
+    "branch": "main",
+    "credentials_id": "github-credentials"
+  },
+  "webhook": {
+    "events": ["push", "pull_request"],
+    "url": "http://localhost/github-webhook/",
+    "content_type": "json"
+  }
+}
