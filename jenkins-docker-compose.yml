@@ -1,6 +1,6 @@
 services:
   jenkins:
-    image: jenkins/jenkins:lts
+    build: ./jenkins
     container_name: jenkins
     privileged: true
     user: root
@@ -10,9 +10,23 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins-backups:/var/jenkins_backups
+      - ./app:/var/jenkins_home/app
+      - ./docker-compose.yml:/var/jenkins_home/docker-compose.yml
     restart: always
     environment:
-      - JENKINS_OPTS="--prefix=/jenkins"
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=false
+      - CASC_RELOAD_TOKEN=your-secure-token
+      - ADMIN_PASSWORD=admin
+      # Add your custom environment variables here
+      - GITHUB_USERNAME=github_user
+      - GITHUB_TOKEN=github_token
+    networks:
+      - jenkins_network
+
+networks:
+  jenkins_network:
+    driver: bridge
 
 volumes:
   jenkins_home:

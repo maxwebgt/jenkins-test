@@ -1,0 +1,17 @@
+configuration-as-code
+job-dsl
+workflow-aggregator
+git
+github
+github-branch-source
+github-api
+docker-workflow
+pipeline-utility-steps
+credentials-binding
+blueocean
+matrix-auth
+role-strategy
+docker-plugin
+kubernetes
+nodejs
+timestamper

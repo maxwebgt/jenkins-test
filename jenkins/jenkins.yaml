@@ -1,0 +1,105 @@
+jenkins:
+  systemMessage: "Jenkins configured using Jenkins Configuration as Code"
+  numExecutors: 2
+  labelString: "jenkins-master"
+  mode: NORMAL
+  scmCheckoutRetryCount: 3
+  quietPeriod: 5
+  
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${ADMIN_PASSWORD:-admin}"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: "DOCKER_HOST"
+            value: "unix:///var/run/docker.sock"
+
+tool:
+  git:
+    installations:
+      - name: "Default"
+        home: "git"
+
+  maven:
+    installations:
+      - name: "Maven 3"
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.8.5"
+
+  nodejs:
+    installations:
+      - name: "NodeJS"
+        properties:
+          - installSource:
+              installers:
+                - nodeJSInstaller:
+                    id: "16.13.0"
+                    npmPackages: "npm@latest"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-credentials"
+              username: "${GITHUB_USERNAME:-github}"
+              password: "${GITHUB_TOKEN:-token}"
+              description: "GitHub credentials"
+
+jobs:
+  - script: >
+      folder('CI-CD') {
+        displayName('CI/CD Pipelines')
+        description('Continuous Integration and Deployment pipelines')
+      }
+      
+      pipelineJob('CI-CD/express-hello-world-pipeline') {
+        definition {
+          cps {
+            script('''
+              pipeline {
+                agent any
+                
+                stages {
+                  stage('Prepare') {
+                    steps {
+                      echo "Preparing build environment"
+                      sh 'mkdir -p app'
+                      sh 'cp -r /var/jenkins_home/app/* app/ || true'
+                      sh 'ls -la'
+                    }
+                  }
+                  
+                  stage('Build') {
+                    steps {
+                      dir('app') {
+                        sh 'docker build -t express-hello-world .'
+                      }
+                    }
+                  }
+                  
+                  stage('Deploy') {
+                    steps {
+                      sh 'docker-compose -f /var/jenkins_home/docker-compose.yml up -d --build'
+                    }
+                  }
+                }
+              }
+            ''')
+            sandbox(true)
+          }
+        }
+      }
