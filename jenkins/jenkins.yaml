@@ -86,7 +86,15 @@ jobs:
                   stage('Build') {
                     steps {
                       dir('app') {
-                        sh 'docker build -t express-hello-world .'
+                        script {
+                          try {
+                            sh 'docker build -t express-hello-world .'
+                          } catch (Exception e) {
+                            echo "Build failed, trying with --no-cache option"
+                            sh 'docker system prune -f'
+                            sh 'docker build -t express-hello-world --no-cache .'
+                          }
+                        }
                       }
                     }
                   }
