@@ -79,7 +79,7 @@ jobs:
                       echo "Cloning repository from GitHub"
                       git branch: 'main',
                           credentialsId: 'github-credentials',
-                          url: 'git@github.com:maxwebgt/jenkins-test.git'
+                          url: 'https://github.com/maxwebgt/jenkins-test.git'
                     }
                   }
                   

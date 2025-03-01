@@ -1,7 +1,7 @@
 {
   "repository": {
     "name": "express-hello-world",
-    "url": "git@github.com:maxwebgt/jenkins-test.git",
+    "url": "https://github.com/maxwebgt/jenkins-test.git",
     "branch": "main",
     "credentials_id": "github-credentials"
   },
